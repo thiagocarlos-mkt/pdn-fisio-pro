@@ -12,7 +12,7 @@ function Roteador() {
   if (loading) return <div className="loading-state">Carregando…</div>
   if (!session) return <Login />
   if (!profile) return <Onboarding />
-  if (profile.role === 'admin') return <AdminPanel />
+  if (profile.email === 'thiagocarlosdns@hotmail.com') return <AdminPanel />
   if (profile.role === 'gestor') return <GestorHome />
   return <AlunoHome />
 }
