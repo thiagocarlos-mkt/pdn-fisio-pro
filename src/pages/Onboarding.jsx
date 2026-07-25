@@ -31,7 +31,7 @@ export default function Onboarding({ onDone }) {
     e.preventDefault()
     setSalvando(true); setErro('')
     const { email, ...resto } = dados
-    const { error: cadastroErr } = await supabase.from('cadastros').upsert({ aluno_id: session.user.id, nome_completo: nome, ...resto })
+    const { error: cadastroErr } = await supabase.from('cadastros').upsert({ aluno_id: session.user.id, ...resto })
     if (cadastroErr) { setErro(cadastroErr.message); setSalvando(false); return }
 
     const { error: profileErr } = await supabase.from('profiles').upsert({
