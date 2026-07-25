@@ -75,7 +75,7 @@ export default function Login() {
       <div className="auth-card">
         <div className="auth-brand">
           <span className="auth-brand-mark">PDN</span>
-          <span className="auth-brand-name">FISIO PRO</span>
+          <span className="auth-brand-name">Fisio Prosper</span>
         </div>
         <p className="auth-sub">Diagnóstico e acompanhamento de gestão em saúde</p>
 

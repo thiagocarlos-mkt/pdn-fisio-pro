@@ -1,4 +1,4 @@
-// Conteúdo do diagnóstico FISIO PRO / PDN — extraído de PDN_IA.md
+// Conteúdo do diagnóstico Fisio Prosper / PDN — extraído de PDN_IA.md
 
 export const ESCALA = [
   { valor: 1, label: 'Discordo totalmente' },
@@ -88,7 +88,7 @@ export const CADASTRO_CAMPOS = [
   { id: 'margem_lucro_faixa', label: 'Qual é aproximadamente a sua margem de lucro mensal?', tipo: 'select', opcoes: MARGEM_FAIXAS },
   { id: 'capacidade_ocupada', label: 'Quanto da sua capacidade atual de atendimento está ocupada?', tipo: 'select', opcoes: CAPACIDADE_FAIXAS },
   { id: 'fase_negocio', label: 'Em qual fase você acredita que o seu negócio está?', tipo: 'select', opcoes: FASE_NEGOCIO_OPCOES },
-  { id: 'resultado_desejado', label: 'Qual é o principal resultado que você deseja alcançar com o FISIO PRO?', tipo: 'textarea' },
+  { id: 'resultado_desejado', label: 'Qual é o principal resultado que você deseja alcançar com o Fisio Prosper?', tipo: 'textarea' },
   { id: 'preocupacao_atual', label: 'O que mais preocupa você atualmente em relação ao negócio?', tipo: 'textarea' },
 ]
 
@@ -225,7 +225,7 @@ export const PERCEPCAO_GLOBAL_CAMPOS = [
   { id: 'sabe_mas_nao_fez', label: 'O que você já sabe que precisa fazer, mas ainda não conseguiu colocar em prática?', tipo: 'textarea' },
   { id: 'o_que_impede', label: 'O que costuma impedir você de executar seus planos?', tipo: 'textarea' },
   { id: 'disposicao_mudar', label: 'Em uma escala de 0 a 10, quanto você está disposto a mudar sua rotina, seus processos ou suas decisões para alcançar seus objetivos?', tipo: 'escala10' },
-  { id: 'resultado_valeu_pena', label: 'Ao final do FISIO PRO, quais resultados concretos fariam você considerar que o mentorado valeu a pena?', tipo: 'textarea' },
+  { id: 'resultado_valeu_pena', label: 'Ao final do Fisio Prosper, quais resultados concretos fariam você considerar que o mentorado valeu a pena?', tipo: 'textarea' },
 ]
 
 export const MOMENTOS = [
