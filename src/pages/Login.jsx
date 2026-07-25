@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 
 export default function Login() {
-  const [modo, setModo] = useState('entrar') // 'entrar' | 'criar-gestor'
+  const [modo, setModo] = useState('entrar') // 'entrar' | 'criar-gestor' | 'criar-aluno'
   const [nome, setNome] = useState('')
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
@@ -40,6 +40,28 @@ export default function Login() {
     setCarregando(false)
   }
 
+  async function criarAluno(e) {
+    e.preventDefault()
+    setErro(''); setMsg(''); setCarregando(true)
+    const { data, error } = await supabase.auth.signUp({ email, password: senha })
+    if (error) { setErro(error.message); setCarregando(false); return }
+
+    if (!data.session) {
+      setMsg('Conta criada. Verifique seu e-mail para confirmar o acesso e depois faça login.')
+      setCarregando(false)
+      return
+    }
+
+    const { error: profErr } = await supabase.from('profiles').insert({
+      id: data.user.id,
+      role: 'aluno',
+      nome,
+      email,
+    })
+    if (profErr) setErro(profErr.message)
+    setCarregando(false)
+  }
+
   return (
     <div className="auth-wrap">
       <div className="auth-card">
@@ -51,7 +73,8 @@ export default function Login() {
 
         <div className="auth-tabs">
           <button className={modo === 'entrar' ? 'active' : ''} onClick={() => setModo('entrar')}>Entrar</button>
-          <button className={modo === 'criar-gestor' ? 'active' : ''} onClick={() => setModo('criar-gestor')}>Sou gestor / mentor</button>
+          <button className={modo === 'criar-aluno' ? 'active' : ''} onClick={() => setModo('criar-aluno')}>Sou aluno</button>
+          <button className={modo === 'criar-gestor' ? 'active' : ''} onClick={() => setModo('criar-gestor')}>Sou gestor</button>
         </div>
 
         {modo === 'entrar' ? (
@@ -64,9 +87,21 @@ export default function Login() {
             </label>
             <button className="btn-primary" disabled={carregando}>{carregando ? 'Entrando…' : 'Entrar'}</button>
           </form>
+        ) : modo === 'criar-aluno' ? (
+          <form onSubmit={criarAluno} className="auth-form">
+            <label>Nome
+              <input required value={nome} onChange={e => setNome(e.target.value)} placeholder="Seu nome" />
+            </label>
+            <label>E-mail
+              <input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="voce@email.com" />
+            </label>
+            <label>Senha
+              <input type="password" required minLength={6} value={senha} onChange={e => setSenha(e.target.value)} placeholder="mínimo 6 caracteres" />
+            </label>
+            <button className="btn-primary" disabled={carregando}>{carregando ? 'Criando…' : 'Criar minha conta'}</button>
+          </form>
         ) : (
           <form onSubmit={criarGestor} className="auth-form">
-            <p className="auth-hint">Alunos não criam conta aqui — o acesso é liberado pelo gestor.</p>
             <label>Nome
               <input required value={nome} onChange={e => setNome(e.target.value)} placeholder="Seu nome" />
             </label>
