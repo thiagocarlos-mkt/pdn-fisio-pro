@@ -5,15 +5,19 @@ import Campo from '../components/Campo'
 import { useAuth } from '../context/AuthContext'
 
 export default function Onboarding({ onDone }) {
-  const { profile, session } = useAuth()
-  const [dados, setDados] = useState({ email: profile?.email || session?.user?.email || '' })
+  const { session, refreshProfile } = useAuth()
+  const [nome, setNome] = useState('')
+  const [dados, setDados] = useState({ email: session?.user?.email || '' })
   const [salvando, setSalvando] = useState(false)
   const [erro, setErro] = useState('')
 
   useEffect(() => {
     async function carregar() {
       const { data } = await supabase.from('cadastros').select('*').eq('aluno_id', session.user.id).maybeSingle()
-      if (data) setDados({ ...data, nome_completo: profile?.nome, email: profile?.email })
+      if (data) {
+        setNome(data.nome_completo || '')
+        setDados({ ...data, email: session?.user?.email })
+      }
     }
     if (session) carregar()
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -26,10 +30,20 @@ export default function Onboarding({ onDone }) {
   async function salvar(e) {
     e.preventDefault()
     setSalvando(true); setErro('')
-    const { nome_completo, email, ...resto } = dados
-    const { error } = await supabase.from('cadastros').upsert({ aluno_id: session.user.id, ...resto })
+    const { email, ...resto } = dados
+    const { error: cadastroErr } = await supabase.from('cadastros').upsert({ aluno_id: session.user.id, nome_completo: nome, ...resto })
+    if (cadastroErr) { setErro(cadastroErr.message); setSalvando(false); return }
+
+    const { error: profileErr } = await supabase.from('profiles').upsert({
+      id: session.user.id,
+      nome,
+      email: session.user.email,
+      role: 'aluno'
+    })
     setSalvando(false)
-    if (error) { setErro(error.message); return }
+    if (profileErr) { setErro(profileErr.message); return }
+
+    await refreshProfile()
     onDone?.()
   }
 
@@ -42,10 +56,10 @@ export default function Onboarding({ onDone }) {
       <form onSubmit={salvar} className="form-grid">
         {CADASTRO_CAMPOS.map(campo => {
           if (campo.id === 'nome_completo') {
-            return <div className="campo" key={campo.id}><span>Nome completo</span><input disabled value={profile?.nome || ''} /></div>
+            return <div className="campo" key={campo.id}><span>Nome completo</span><input required value={nome} onChange={e => setNome(e.target.value)} /></div>
           }
           if (campo.id === 'email') {
-            return <div className="campo" key={campo.id}><span>E-mail</span><input disabled value={profile?.email || ''} /></div>
+            return <div className="campo" key={campo.id}><span>E-mail</span><input disabled value={session?.user?.email || ''} /></div>
           }
           return <Campo key={campo.id} campo={campo} valor={dados[campo.id]} onChange={setCampo} />
         })}
