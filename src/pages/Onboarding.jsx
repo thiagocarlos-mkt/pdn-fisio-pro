@@ -31,8 +31,6 @@ export default function Onboarding({ onDone }) {
     e.preventDefault()
     setSalvando(true); setErro('')
     const { email, ...resto } = dados
-    const { error: cadastroErr } = await supabase.from('cadastros').upsert({ aluno_id: session.user.id, ...resto })
-    if (cadastroErr) { setErro(cadastroErr.message); setSalvando(false); return }
 
     const { error: profileErr } = await supabase.from('profiles').upsert({
       id: session.user.id,
@@ -40,8 +38,11 @@ export default function Onboarding({ onDone }) {
       email: session.user.email,
       role: 'aluno'
     })
+    if (profileErr) { setErro(profileErr.message); setSalvando(false); return }
+
+    const { error: cadastroErr } = await supabase.from('cadastros').upsert({ aluno_id: session.user.id, ...resto })
     setSalvando(false)
-    if (profileErr) { setErro(profileErr.message); return }
+    if (cadastroErr) { setErro(cadastroErr.message); return }
 
     await refreshProfile()
     onDone?.()
