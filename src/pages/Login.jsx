@@ -1,14 +1,22 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabaseClient'
 
 export default function Login() {
   const [modo, setModo] = useState('entrar') // 'entrar' | 'criar-gestor' | 'criar-aluno'
+  const [mostrarGestor, setMostrarGestor] = useState(false)
   const [nome, setNome] = useState('')
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
   const [erro, setErro] = useState('')
   const [msg, setMsg] = useState('')
   const [carregando, setCarregando] = useState(false)
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('modo') === 'gestor') {
+      setMostrarGestor(true)
+    }
+  }, [])
 
   async function entrar(e) {
     e.preventDefault()
@@ -73,8 +81,8 @@ export default function Login() {
 
         <div className="auth-tabs">
           <button className={modo === 'entrar' ? 'active' : ''} onClick={() => setModo('entrar')}>Entrar</button>
-          <button className={modo === 'criar-aluno' ? 'active' : ''} onClick={() => setModo('criar-aluno')}>Sou aluno</button>
-          <button className={modo === 'criar-gestor' ? 'active' : ''} onClick={() => setModo('criar-gestor')}>Sou gestor</button>
+          <button className={modo === 'criar-aluno' ? 'active' : ''} onClick={() => setModo('criar-aluno')}>Criar conta Aluno</button>
+          {mostrarGestor && <button className={modo === 'criar-gestor' ? 'active' : ''} onClick={() => setModo('criar-gestor')}>Sou gestor</button>}
         </div>
 
         {modo === 'entrar' ? (
